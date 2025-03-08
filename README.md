@@ -5,7 +5,7 @@ All project build in Python Streamlit framework
 1. Unit Convertor:  
     https://py-unit-convertor.streamlit.app/
 2. Password Strength Meter:    
-    
+    https://py-password-meter.streamlit.app/
 
 
 
