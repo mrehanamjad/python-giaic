@@ -33,9 +33,12 @@ def check_password_strength(password):
     
     return score, feedback
 
-def generate_strong_password():
-    characters = string.ascii_letters + string.digits + "!@#$%^&*"
-    return ''.join(random.choice(characters) for _ in range(12))
+def generate_strong_password(length=12):
+    while True:
+        password = ''.join(random.choices(string.ascii_letters + string.digits + "!@#$%^&*", k=length))
+        score, _ = check_password_strength(password)
+        if score == 4:
+            return password
 
 # Streamlit UI
 st.title("🔐 Password Strength Meter")
@@ -43,21 +46,24 @@ st.write("Enter a password to check its strength and get suggestions.")
 
 password = st.text_input("Enter your password:", type="password")
 
-if password:
-    score, feedback = check_password_strength(password)
-    
-    if score == 4:
-        st.success("✅ Strong Password!")
-    elif score == 3:
-        st.warning("⚠️ Moderate Password - Consider adding more security features.")
+if st.button("Check Password Strength"):
+    if password:
+        score, feedback = check_password_strength(password)
+        
+        if score == 4:
+            st.success("✅ Strong Password!")
+        elif score == 3:
+            st.warning("⚠️ Moderate Password - Consider adding more security features.")
+        else:
+            st.error("❌ Weak Password - Improve it using the suggestions below.")
+        
+        if feedback:
+            st.write("### Suggestions to Improve Your Password:")
+            for tip in feedback:
+                st.write(f"- {tip}")
     else:
-        st.error("❌ Weak Password - Improve it using the suggestions below.")
+        st.warning("Please enter a password to check.")
     
-    if feedback:
-        st.write("### Suggestions to Improve Your Password:")
-        for tip in feedback:
-            st.write(f"- {tip}")
-    
-    st.write("### Generate a Strong Password:")
-    if st.button("Generate Password"):
-        st.code(generate_strong_password(), language="python")
+st.write("### Generate a Strong Password:")
+if st.button("Generate Password"):
+    st.code(generate_strong_password(), language="python")
