@@ -196,6 +196,7 @@
 
 
 
+
 import re
 import streamlit as st
 import random
@@ -241,24 +242,21 @@ st.write("Enter a password to check its strength and get suggestions.")
 
 password = st.text_input("Enter your password:", type="password")
 
-if st.button("Check Password Strength"):
-    if password:
-        score, feedback = check_password_strength(password)
-        
-        if score == 4:
-            st.success("✅ Strong Password!")
-        elif score == 3:
-            st.warning("⚠️ Moderate Password - Consider adding more security features.")
-        else:
-            st.error("❌ Weak Password - Improve it using the suggestions below.")
-        
-        if feedback:
-            st.write("### Suggestions to Improve Your Password:")
-            for tip in feedback:
-                st.write(f"- {tip}")
-    else:
-        st.warning("Please enter a password to check.")
+if password:
+    score, feedback = check_password_strength(password)
     
-st.write("### Generate a Strong Password:")
-if st.button("Generate Password"):
-    st.code(generate_strong_password(), language="python")
+    if score == 4:
+        st.success("✅ Strong Password!")
+    elif score == 3:
+        st.warning("⚠️ Moderate Password - Consider adding more security features.")
+    else:
+        st.error("❌ Weak Password - Improve it using the suggestions below.")
+    
+    if feedback:
+        st.write("### Suggestions to Improve Your Password:")
+        for tip in feedback:
+            st.write(f"- {tip}")
+    
+    st.write("### Generate a Strong Password:")
+    if st.button("Generate Password"):
+        st.code(generate_strong_password(), language="python")
