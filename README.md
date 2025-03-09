@@ -10,7 +10,8 @@ All project build in Python Streamlit framework
     https://py-password-meter.streamlit.app/
 3. Number Guessing Game:       
     https://py-number-guessing-game.streamlit.app/
-
+4. Text Analyzer:    
+    https://py-text-analyzer.streamlit.app/
 
 - env activate command
     ```

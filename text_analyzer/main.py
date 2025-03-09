@@ -37,7 +37,7 @@ def main():
         page_icon="🧪",
         layout="centered"
     )
-    st.title("📖 Text Analyzer")
+    st.title("🧪 Text Analyzer")
     
     if "word_count" not in st.session_state:
         st.session_state.word_count = 0
