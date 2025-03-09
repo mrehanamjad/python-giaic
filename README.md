@@ -6,8 +6,8 @@ All project build in Python Streamlit framework
     https://py-unit-convertor.streamlit.app/
 2. Password Strength Meter:    
     https://py-password-meter.streamlit.app/
-3. Number Guessing Game:     
-    
+3. Number Guessing Game:       
+    https://py-number-guessing-game.streamlit.app/
 
 
 - env activate command
