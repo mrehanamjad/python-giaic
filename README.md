@@ -2,6 +2,8 @@
 All project build in Python Streamlit framework
 
 ## Projects Live Links:
+1. Growth Mindset Challange ~ Data Sweeper:    
+    https://py-data-sweeper.streamlit.app/
 1. Unit Convertor:  
     https://py-unit-convertor.streamlit.app/
 2. Password Strength Meter:    
