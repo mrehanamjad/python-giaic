@@ -1,12 +1,10 @@
 [project]
-name = "number-guessing-game"
+name = "growth-mindset-challange-data-sweeper"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "pandas>=2.2.3",
     "streamlit>=1.43.1",
 ]
-
-[tool.uv.workspace]
-members = ["growth-mindset-challange_data-sweeper"]
