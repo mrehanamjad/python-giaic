@@ -47,7 +47,13 @@ def main():
         st.session_state.contains_python = False
         st.session_state.avg_word_length = 0.0
     
-    st.session_state.paragraph = st.text_area("Enter a paragraph:", "", height=200)
+    uploaded_file = st.file_uploader("Upload a text file", type=["txt"])
+    
+    if uploaded_file is not None:
+        file_contents = uploaded_file.getvalue().decode("utf-8")
+        st.session_state.paragraph = file_contents
+    else:
+        st.session_state.paragraph = st.text_area("Enter a paragraph:", "", height=200)
     
     if st.button("🔍 Analyze Text"):
         analyze_text()
