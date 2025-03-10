@@ -71,12 +71,19 @@ def main():
                 replace_word()
             st.write("**Modified Paragraph:**")
             st.code(st.session_state.modified_paragraph, language="text")
+            st.download_button(label="⬇️ Download Modified Text", data=st.session_state.modified_paragraph, file_name="modified_text.txt", mime="text/plain")
         
         with st.expander("🔠 Text Transformations"):
+            uppercase_text = st.session_state.modified_paragraph.upper()
+            lowercase_text = st.session_state.modified_paragraph.lower()
+
             st.write("**Uppercase:**")
-            st.code(st.session_state.modified_paragraph.upper(), language="text")
+            st.code(uppercase_text, language="text")
+            st.download_button(label="⬇️ Download Uppercase Text", data=uppercase_text, file_name="uppercase_text.txt", mime="text/plain")
+
             st.write("**Lowercase:**")
-            st.code(st.session_state.modified_paragraph.lower(), language="text")
+            st.code(lowercase_text, language="text")
+            st.download_button(label="⬇️ Download Lowercase Text", data=lowercase_text, file_name="lowercase_text.txt", mime="text/plain")
         
         st.markdown("## 🔎 Additional Insights")
         st.success(f"**Contains 'Python'?:** {st.session_state.contains_python}")  
