@@ -7,14 +7,14 @@ load_dotenv()
 
 uri = os.getenv("MONGO_URI")
 client = MongoClient(uri,tlsAllowInvalidCertificates=True)
-db = client.library  # Assuming you have a 'library' database
-collection = db.books  # A collection for books
+db = client.library  
+collection = db.books 
 
 # App title
 st.title("📚 Personal Library Manager")
 st.markdown("----")
 
-# Menu - Using Radio button instead of dropdown (selectbox)
+
 menu = [
     "Add a Book",
     "Remove a Book",
@@ -27,7 +27,7 @@ menu = [
 
 choice = st.sidebar.radio("Menu", menu)
 
-# 1. Add Book
+
 if choice == "Add a Book":
     st.header("➕ Add a Book")
     with st.form("add_form", clear_on_submit=True):
@@ -46,13 +46,13 @@ if choice == "Add a Book":
                     "status": status
                 }
                 collection.insert_one(book)
-                st.success(f"📖 Book '{title}' added!")
+                st.success(f"Book '{title}' added!")
             else:
                 st.warning("Title and Author are required.")
 
-# 2. Remove Book
+
 elif choice == "Remove a Book":
-    st.header("❌ Remove a Book")
+    st.header(" Remove a Book")
     books = collection.find()
     if not books:
         st.info("No books to remove.")
@@ -66,7 +66,7 @@ elif choice == "Remove a Book":
 
 # 3. Update Book Details
 elif choice == "Update Book Details":
-    st.header("📝 Update Book Details")
+    st.header("Update Book Details")
     books = collection.find()
     if not books:
         st.info("No books to update.")
@@ -88,7 +88,6 @@ elif choice == "Update Book Details":
                 st.success("Book details updated successfully.")
                 st.experimental_rerun()
 
-# 4. Update Read Status
 elif choice == "Update Read Status":
     st.header("✅ Update Read Status")
     books = collection.find()
@@ -106,7 +105,6 @@ elif choice == "Update Read Status":
             st.success(f"Updated status of '{selected_title}' to {new_status}.")
             st.experimental_rerun()
 
-# 5. Search for a Book
 elif choice == "Search for a Book":
     st.header("🔍 Search for a Book")
     query = st.text_input("Search by Title or Author")
@@ -123,7 +121,6 @@ elif choice == "Search for a Book":
         else:
             st.warning("No matching books found.")
 
-# 6. Display All Books
 elif choice == "Display All Books":
     st.header("📋 All Books")
     books = collection.find()
@@ -141,7 +138,6 @@ elif choice == "Display All Books":
         ]
         st.table(books_data)
 
-# 7. Display Statistics
 elif choice == "Display Statistics":
     st.header("📊 Library Statistics")
 
@@ -151,7 +147,6 @@ elif choice == "Display Statistics":
     unread_books = total_books - read_books
     genres = set(book["genre"] for book in books if book["genre"])
 
-    # Display overall statistics using st.metric
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -161,12 +156,10 @@ elif choice == "Display Statistics":
     with col3:
         st.metric(label="📖 Unread Books", value=unread_books)
 
-    # Create a bar chart for read/unread books
     if total_books > 0:
         data = {"Read": read_books, "Unread": unread_books}
         st.bar_chart(data)
 
-    # Display genres in a nice format with count
     if genres:
         st.subheader("🏷️ Genres")
         genre_counts = {genre: sum(1 for book in books if book["genre"] == genre) for genre in genres}
@@ -175,3 +168,9 @@ elif choice == "Display Statistics":
 
     else:
         st.warning("No genres available.")
+
+
+
+
+
+
