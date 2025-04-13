@@ -1,8 +1,6 @@
 import random
 
 def computer_guessing_game():
-    """guessing game where the computer has to guess the correct number."""
-
     print("Think of a secret number between 1 and 100.")
     print("I will try to guess it. Please tell me if my guess is:")
     print("- 'h' for higher")

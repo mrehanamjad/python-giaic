@@ -1,8 +1,6 @@
 import random
 
 def number_guessing_game():
-    """Plays a number guessing game with the user."""
-
     print("Welcome to the Number Guessing Game!")
     print("Guess a number between 1 and 100.")
     win_number = random.randint(1, 100)
