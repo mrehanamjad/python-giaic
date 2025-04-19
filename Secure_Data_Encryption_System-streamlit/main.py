@@ -87,7 +87,10 @@ def signup(name: str, email: str, password: str) -> None:
             'email': email,
             'password': hashed_password
         }
-        st.rerun()
+         # ✅ Debug: Print all users
+        cursor.execute('SELECT * FROM users')
+        st.write(cursor.fetchall())  
+        # st.rerun()
     except sqlite3.IntegrityError:
         st.error("❌ Email already exists.")
     except sqlite3.DatabaseError as e:
@@ -110,7 +113,9 @@ def login(email: str, password: str) -> bool:
                 'password': user[3]
             }
             st.success("✅ Login successful!")
-            st.rerun()
+            # st.rerun()
+            # ✅ Debug: Print all users
+            cursor.execute('SELECT * FROM users')
             return True
         else:
             st.error("❌ Invalid email or password.")
