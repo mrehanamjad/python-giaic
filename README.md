@@ -12,6 +12,8 @@ All project build in Python Streamlit framework
     https://py-number-guessing-game.streamlit.app/
 4. Text Analyzer:    
     https://py-text-analyzer.streamlit.app/
+5. Secure Data Encryption System:
+     https://py-data-encryption-system.streamlit.app/
 
 - env activate command
     ```
