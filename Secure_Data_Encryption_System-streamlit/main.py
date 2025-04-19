@@ -5,6 +5,7 @@ import base64
 import uuid
 
 conn = st.connection("sdes_db", type="sql")
+
 with conn.session as s:
     s.execute('''
     CREATE TABLE IF NOT EXISTS users (
