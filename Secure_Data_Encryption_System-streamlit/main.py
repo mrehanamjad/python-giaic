@@ -1,32 +1,27 @@
-import sqlite3
 import hashlib
 import streamlit as st
 from cryptography.fernet import Fernet
 import base64
 import uuid
 
-conn = sqlite3.connect('sdes.db', check_same_thread=False)
-cursor = conn.cursor()
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
-)
-''')
-
-conn.commit()
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS data (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    encrypted_data TEXT NOT NULL,
-    user_id TEXT NOT NULL
-)
-''')
-conn.commit()
+conn = st.connection("sdes_db", type="sql")
+with conn.session as s:
+    s.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    )
+    ''')
+    s.execute('''
+    CREATE TABLE IF NOT EXISTS data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        encrypted_data TEXT NOT NULL,
+        user_id TEXT NOT NULL
+    )
+    ''')
+    s.commit()
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
@@ -48,38 +43,49 @@ def decrypt_data(encrypted_data: str, passkey: str) -> str:
         decrypted = fernet.decrypt(encrypted_data.encode())
         return decrypted.decode()
     except Exception:
-        return "❌ Decryption failed! Incorrect passkey or corrupted data."
+        return "Decryption failed! Incorrect passkey or corrupted data."
 
 def insert_data(data: str, passkey: str, user_id: str) -> None:
     encrypted_data = encrypt_data(data, passkey)
     try:
-        cursor.execute('''INSERT INTO data (encrypted_data, user_id) VALUES (?, ?);''', (encrypted_data, user_id))
-        conn.commit()
-        st.success("✅ Data inserted successfully!")
-    except sqlite3.DatabaseError as e:
-        st.error(f"❌ Database error occurred: {e}")
+        with conn.session as s:
+            s.execute(
+                '''INSERT INTO data (encrypted_data, user_id) VALUES (:data, :user_id);''',
+                params={"data": encrypted_data, "user_id": user_id}
+            )
+            s.commit()
+        st.success("Data inserted successfully!")
     except Exception as e:
-        st.error(f"❌ An unexpected error occurred: {e}")
+        st.error(f"Error occurred while inserting data: {e}")
 
 def get_encrypted_data(user_id: str) -> list:
     try:
-        cursor.execute('''SELECT encrypted_data FROM data WHERE user_id = ?;''', (user_id,))
-        data_entries = cursor.fetchall()
-        return data_entries
-    except sqlite3.DatabaseError as e:
-        st.error(f"❌ Database error occurred: {e}")
+        with conn.session as s:
+            result = s.execute(
+                '''SELECT encrypted_data FROM data WHERE user_id = :user_id;''',
+                params={"user_id": user_id}
+            )
+            return result.fetchall()
     except Exception as e:
-        st.error(f"❌ An unexpected error occurred: {e}")
+        st.error(f"Error occurred while fetching data: {e}")
     return []
 
 def signup(name: str, email: str, password: str) -> None:
     try:
         _id = str(uuid.uuid4())
         hashed_password = hash_password(password)
-        cursor.execute('''INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?);''',
-                       (_id, name, email, hashed_password))
-        conn.commit()
-        st.success("✅ User registered successfully!")
+        with conn.session as s:
+            s.execute(
+                '''INSERT INTO users (id, name, email, password) VALUES (:id, :name, :email, :password);''',
+                params={
+                    "id": _id,
+                    "name": name,
+                    "email": email,
+                    "password": hashed_password
+                }
+            )
+            s.commit()
+        st.success("User registered successfully!")
         st.session_state.authenticated = True
         st.session_state.user_data = {
             'id': _id,
@@ -87,43 +93,38 @@ def signup(name: str, email: str, password: str) -> None:
             'email': email,
             'password': hashed_password
         }
-         # ✅ Debug: Print all users
-        cursor.execute('SELECT * FROM users')
-        st.write(cursor.fetchall())  
-        # st.rerun()
-    except sqlite3.IntegrityError:
-        st.error("❌ Email already exists.")
-    except sqlite3.DatabaseError as e:
-        st.error(f"❌ Database error occurred: {e}")
+        st.rerun()
     except Exception as e:
-        st.error(f"❌ An unexpected error occurred: {e}")
+        if "UNIQUE constraint failed: users.email" in str(e):
+            st.error("Email already exists.")
+        else:
+            st.error(f"Error occurred during signup: {e}")
 
 def login(email: str, password: str) -> bool:
     try:
         hashed_password = hash_password(password)
-        cursor.execute('''SELECT * FROM users WHERE email = ? AND password = ?;''',
-                       (email, hashed_password))
-        user = cursor.fetchone()
-        if user:
-            st.session_state.authenticated = True
-            st.session_state.user_data = {
-                'id': user[0],
-                'name': user[1],
-                'email': user[2],
-                'password': user[3]
-            }
-            st.success("✅ Login successful!")
-            # st.rerun()
-            # ✅ Debug: Print all users
-            cursor.execute('SELECT * FROM users')
-            return True
-        else:
-            st.error("❌ Invalid email or password.")
-            return False
-    except sqlite3.DatabaseError as e:
-        st.error(f"❌ Database error occurred: {e}")
+        with conn.session as s:
+            result = s.execute(
+                '''SELECT * FROM users WHERE email = :email AND password = :password;''',
+                params={"email": email, "password": hashed_password}
+            )
+            user = result.fetchone()
+            if user:
+                st.session_state.authenticated = True
+                st.session_state.user_data = {
+                    'id': user[0],
+                    'name': user[1],
+                    'email': user[2],
+                    'password': user[3]
+                }
+                st.success("Login successful!")
+                st.rerun()
+                return True
+            else:
+                st.error("Invalid email or password.")
+                return False
     except Exception as e:
-        st.error(f"❌ An unexpected error occurred: {e}")
+        st.error(f"Error occurred during login: {e}")
     return False
 
 st.title("🔐 Secure Data Encryption System")
@@ -186,9 +187,9 @@ else:
                         decryted_data_list.append(decryptd_d)
 
                 if not decryted_data_list:
-                    st.error("❌ Decryption failed! No data found with this passkey - Incorrect passkey or corrupted data.")
+                    st.error("Decryption failed! No data found with this passkey - Incorrect passkey or corrupted data.")
                 else:   
-                    st.success("✅ Decrypted data:")
+                    st.success("Decrypted data:")
                     for i, v in enumerate(decryted_data_list, 1):
                         st.code(f"{v}")
                     st.markdown("---")
@@ -200,6 +201,6 @@ else:
         if st.button("Logout"):
             st.session_state.authenticated = False
             st.session_state.user_data = {}
-            st.success("✅ Logged out successfully.")
+            st.success("Logged out successfully.")
             st.rerun()
 
