@@ -8,3 +8,4 @@ class Logger:
 
 l = Logger()
 del l 
+

@@ -8,3 +8,4 @@ class Multiplier:
 m = Multiplier(5)
 print(callable(m))
 print(m(10))
+

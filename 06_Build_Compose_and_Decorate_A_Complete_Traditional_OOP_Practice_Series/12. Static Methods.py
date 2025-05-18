@@ -4,3 +4,4 @@ class TemperatureConverter:
         return (c * 9/5) + 32
 
 print(TemperatureConverter.celsius_to_fahrenheit(30))
+

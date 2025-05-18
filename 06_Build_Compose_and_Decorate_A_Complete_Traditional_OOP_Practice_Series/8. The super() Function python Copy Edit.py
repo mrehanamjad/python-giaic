@@ -3,7 +3,6 @@
 # Person class. In the Teacher class, you need to add a field for the subject that the teacher
 # teaches.
 
-
 class Person:
     def __init__(self, name):
         self.name = name

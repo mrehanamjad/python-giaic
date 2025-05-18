@@ -10,3 +10,4 @@ try:
     check_age(16)
 except InvalidAgeError as e:
     print("Error:", e)
+

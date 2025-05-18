@@ -16,3 +16,4 @@ class D(B, C):
 d = D()
 d.show() 
 print(D.__mro__)  
+
