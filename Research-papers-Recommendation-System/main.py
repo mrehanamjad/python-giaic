@@ -2,7 +2,7 @@ from recommender import PaperRecommender
 from utils import get_user_query
 
 def main():
-    recommender = PaperRecommender("arxiv-metadata-oai-snapshot.json")
+    recommender = PaperRecommender("./arxiv-metadata-oai-snapshot.json")
     query = get_user_query()
     results = recommender.recommend(query)
 

@@ -13,7 +13,7 @@ Enter your research interests, keywords, or a paper abstract snippet below and g
 query = st.text_area("🔍 What are you looking for?", height=150)
 
 if 'recommender' not in st.session_state:
-    st.session_state.recommender = PaperRecommender("arxiv-metadata-oai-snapshot.json")
+    st.session_state.recommender = PaperRecommender("./arxiv-metadata-oai-snapshot.json")
 
 if st.button("Get Recommendations"):
     if not query.strip():
