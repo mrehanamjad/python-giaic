@@ -1,1 +1,1 @@
-"./arxiv-metadata-oai-snapshot.json"
+"arxiv-metadata-oai-snapshot.json"
